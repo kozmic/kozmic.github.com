@@ -1,0 +1,10 @@
+.reveal footer {
+    margin-top: 20%;
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
+
+.reveal .slides>section,
+.reveal .slides>section>section {
+    line-height: 1.4em;
+}
