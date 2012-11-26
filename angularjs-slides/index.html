@@ -212,12 +212,15 @@ var SimpleCtrl = function ($scope) {
                             <li>
                                 Digest har en 10 cycle limit, får du denne feilen har du en sirkulær avhengighet.
                             </li>
+                            <li>
+                                $scope.$apply er nice for console ting med AngularJS debug console
+                            </li>
                         </ul>
                     </aside>
                 </section>
 
                 <section>
-                    <h2>Templating</h2>
+                    <h2>Templates</h2>
 
                     <ul>
                         <li>
@@ -227,6 +230,12 @@ var SimpleCtrl = function ($scope) {
                             Parsed by browser and resulting DOM is cached in $templateCache
                         </li>
                     </ul>
+                    <pre><code>
+&lt;h2>{{ heading }}&lt;/h2>
+&lt;h2 ng-model="heading">&lt;/h2>
+&lt;h2 ng-bind="heading">&lt;/h2>
+
+                    </code></pre>
 
                     <aside class="notes">
                     </aside>
@@ -234,7 +243,7 @@ var SimpleCtrl = function ($scope) {
 
                 <section>
                     <h2>
-                        Templating lifecycle
+                        Template lifecycle
                     </h2>
                     <img src="img/concepts-view.png" width="55%"/>
 
@@ -276,7 +285,7 @@ FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
 
                     <pre><code>
 angualar.module('myModule', []).
-config(['depProvider', function(depProvider){
+config(function(depService){
 ...
 }).
 factory('serviceId', function(depService) {
@@ -350,7 +359,7 @@ newCard.$save();
                     <h2>REST mocking</h2>
 
                     <pre><code>
-// When developing or in tests mock backend
+// Mocking XHR in dev-mode
 var MyAppDev = angular.module('MyAppDev', ['MyApp', 'ngMockE2E']);
     MyAppDev.run(function($httpBackend) {
 
