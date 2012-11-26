@@ -36,7 +36,7 @@
 			<div class="slides">
 
 				<section>
-					<h1>AngularJS</h1>
+					<img src="img/AngularJS-large.png" alt="AngularJS" class="big" width="50%"/>
 					<h3>Superheroic JavaScript MVW Framework</h3>
 					<p>
 						<small>Slides and demo by Ståle Pettersen / <a href="http://twitter.com/kozmic">@kozmic</a> </small>
@@ -80,25 +80,35 @@
                     </ul>
 
                     <aside class="notes">
+                        <ul>
+                            <li>
+                                Et global objekt, "angular", resten er DI.
+                            </li>
+                        </ul>
                     </aside>
                 </section>
 
                 <section>
                     <h2>MVVM-ish</h2>
-
-                    <p>
-                        <strong>Model:</strong> Plain javascript (!)
-                    </p>
-                    <p>
-                        <strong>ViewModel:</strong> $scope object with tiny API which is dirty checked
-                    </p>
-                    <p>
-                        <strong>Controller:</strong> Set initial state of $scope and defines behavior when $scope change
-                    </p>
-                    <p>
-                        <strong>View:</strong> Resulting HTML rendered markup (including directives) with bindings
-                    </p>
-
+                    <table>
+                        <tr>
+                            <td><strong>Model:</strong></td>
+                            <td>Plain Javascript</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ViewModel:</strong></td>
+                            <td>$scope object with tiny API which is dirty checked</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Controller:</strong></td>
+                            <td>Set initial state of $scope and defines behavior when $scope change</td>
+                        </tr>
+                        <tr>
+                            <td><strong>View:</strong></td>
+                            <td>Resulting HTML rendered markup (including directives) with bindings</td>
+                        </tr>
+                    </table>
+                    
                     <aside class="notes"></aside>
                 </section>
 
@@ -122,7 +132,45 @@
                 <section>
                     <h2>Controller</h2>
 
-                    <p>All controllers have their own $scope</p>
+                    <ul>
+                        <li>
+                            Provides $scope to view
+                        </li>
+                        <li>
+                            Populates $scope through service or factory
+                        </li>
+                    </ul>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>Controller</h2>
+
+                    <pre><code>
+var SimpleCtrl = function ($scope) {
+
+    $scope.title = "SimpleCtrl fantastic title";
+    $scope.footer = "My Footer ";
+
+    $scope.people = [
+        {name: 'Jøran Lillesand', age: 28, tronder: true},
+        {name: 'Ståle Pettersen', age: 20, tronder: false},
+        {name: 'Ola Nordmann', age: 50, tronder: false }
+    ];
+
+    $scope.addPerson = function() {
+        $scope.people.push({name: $scope.name, age: $scope.age});
+        $scope.name = "";
+        $scope.age = "";
+    };
+
+    $scope.deletePerson = function (person) {
+        $scope.people.splice($scope.people.indexOf(person), 1);
+    };
+
+}
+                    </code></pre>
 
                     <aside class="notes"></aside>
                 </section>
@@ -135,19 +183,36 @@
                             Uses dirty checking instead of change listeners
                         </li>
                         <li>
-                            $digest
+                            ($apply -&gt;) $digest -&gt; $watch
                         </li>
                         <li>
-                            To trigger changes in AngularJS from outside AngularJS, use:
-                            <pre><code>$scope.$apply(CODE_HERE)</code></pre>
+                            To trigger changes in AngularJS from outside AngularJS:
+                            <pre><code>$scope.$apply(SCOPE-CHANGING-CODE-HERE)</code></pre>
                         </li>
                     </ul>
 
                     <footer>
-                        Details: <a href="http://stackoverflow.com/a/9693933">Dirty checking vs change listeners</a>
+                        <ul>
+                            <li>Lifecycle details: http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/</li>
+                        </ul>
+
                     </footer>
 
                     <aside class="notes">
+                        <ul>
+                            <li>
+                                $digest processes all watch expressions in current scope
+                            </li>
+                            <li>
+                                http://stackoverflow.com/questions/9682092/databinding-in-angularjs/9693933#9693933
+                            </li>
+                            <li>
+                                $apply is $digest with error handling++ (and always dirty checks the whole $rootScope
+                            </li>
+                            <li>
+                                Digest har en 10 cycle limit, får du denne feilen har du en sirkulær avhengighet.
+                            </li>
+                        </ul>
                     </aside>
                 </section>
 
@@ -156,10 +221,10 @@
 
                     <ul>
                         <li>
-                            Inline / URL / script-type / populate $templateCache
+                            Inline / URL / script-type
                         </li>
                         <li>
-                            Parsed by browser and resulting DOM cached
+                            Parsed by browser and resulting DOM is cached in $templateCache
                         </li>
                     </ul>
 
@@ -168,13 +233,17 @@
                 </section>
 
                 <section>
-                    <h2>Directives</h2>
+                    <h2>
+                        Templating lifecycle
+                    </h2>
+                    <img src="/img/concepts-view.png" width="55%"/>
 
                     <p>
-
+                        Source: <a href="http://docs.angularjs.org/guide/concepts">http://docs.angularjs.org/guide/concepts</a>
                     </p>
 
                     <aside class="notes">
+                        AngularJS: Browser renderer template, DOM deretter. Andre: Reparser String-template med data ved update
                     </aside>
                 </section>
 
@@ -182,19 +251,169 @@
                     <h2>Dependency injection</h2>
 
                     <p>
-
+                        Magic DI
                     </p>
+                    <pre><code>
+var FancyCtrl = function($scope, $location, FancyService) {
+    // Your batshit fancy code here
+}
+                    </code></pre>
+                    <p>
+                        Minifiable
+                    </p>
+                    <pre><code>
+FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
+                    </code></pre>
+
+                    <aside class="notes">
+                        Alternativt alt på en gang:
+                        var FancyCtrl = ['$scope', '$location', 'FancyService', function($scope, $http) { /**/ }];
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Dependency injection</h2>
+
+                    <pre><code>
+angualar.module('myModule', []).
+config(['depProvider', function(depProvider){
+...
+}]).
+factory('serviceId', ['depService', function(depService) {
+...
+}]).
+directive('directiveName', ['depService', function(depService) {
+...
+}]).
+filter('filterName', ['depService', function(depService) {
+...
+}]).
+run(['depService', function(depService) {
+...
+}]);
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>REST</h2>
+
+                    <ul>
+                        <li>
+                            Buildt in service $resource:
+                            <pre><code>$resource(url[, paramDefaults][, actions]);</code></pre>
+                        </li>
+                        <li>
+                            Default returns: query, save, remove
+                        </li>
+                        <li>
+                            Buildt on top of $http (ajax, promise, interceptors, exception handling, >)]}',</strong>, X-XSRF-TOKEN header)
+                        </li>
+                    </ul>
+                    <pre><code>
+var CreditCard = $resource('/user/:userId/card/:cardId',
+    {userId:123, cardId:'@id'}, {
+    charge: {method:'POST', params:{charge:true}}
+});
+var newCard = new CreditCard({number:'0123'});
+newCard.name = "Mike Smith";
+newCard.$save();
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>REST mocking</h2>
+
+                    <pre><code>
+// When developing or in tests mock backend
+var MyAppDev = angular.module('MyAppDev', ['MyApp', 'ngMockE2E']);
+    MyAppDev.run(function($httpBackend) {
+
+    $httpBackend.whenGET('/simple/ping').respond('pong');
+    $httpBackend.whenGET('/simple/cards/').respond(window.data.cards);
+}
+                    </code></pre>
+                    <pre><code>
+&lt;html ng-app="MyAppDev">
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>Directives</h2>
+
+                    <ul>
+                        <li>
+                            At the core of AngularJS
+                        </li>
+                        <li>
+                            We've already seen some of the built in directives
+                        </li>
+                        <li>
+                            Can be really simple or complex, and crazy powerful
+                        </li>
+                    </ul>
+
+                    <pre><code>
+&lt;html ng-app&gt;
+&lt;button ng-click="save()">&lt;/button>
+&lt;question type="radio" title="Felling good?" alts="{ 'yes':1, 'no':0 }" />
+&lt;markdown>
+## Crazy stuff
+* Should give AngularJS a spin
+* 4 realz!
+&lt;/markdown>
+
+                    </code></pre>
 
                     <aside class="notes">
                     </aside>
                 </section>
 
                 <section>
-                    <h2>Routing</h2>
+                    <h2>Directives - Simple</h2>
 
-                    <p>
+                </section>
 
-                    </p>
+                <section>
+                    <h2>Directives - Advanced</h2>
+
+                </section>
+
+                <section>
+                    <h2>Routes</h2>
+
+                    <pre><code>
+angular.module('myRoutes', [], function($routeProvider, $locationProvider) {
+  $routeProvider
+    .when('/user/:userId', {
+      templateUrl: 'user.html',
+      controller: UserCtrl
+    })
+
+    .when('/user/:userId/card/:cardId', {
+      templateUrl: 'card.html',
+      controller: CardCtrl,
+      resolve: {
+        delay: function($q, $timeout) {
+          var delay = $q.defer();
+          $timeout(delay.resolve, 200);
+          return delay.promise;
+        }
+      }
+    })
+
+    .when('/404', { templateUrl: '404.html' });
+
+    .otherwise( { redirectTo: '/404' });
+
+  $locationProvider.html5Mode(true);
+});
+                    </code></pre>
 
                     <aside class="notes"></aside>
                 </section>
@@ -252,7 +471,7 @@ expect(mode).toEqual('app');
 
                     <ul>
                         <li>
-                            nested views
+                            Nested views (ng-include works, but feels wrong)
                         </li>
                         <li>
                             Global dialog behavior
@@ -266,9 +485,14 @@ expect(mode).toEqual('app');
                     <h2>Good resources</h2>
                     <ul>
                         <li><a href="http://angularjs.org/">angularjs.org</a></li>
+                        <li><a href="http://blog.angularjs.org/">blog.angularjs.org/</a></li>
                         <li><a href="http://www.youtube.com/user/johnlindquist">John Lindquist @ youtube.com</a></li>
                         <li><a href="http://docs.angularjs.org/cookbook/">AngularJS cookbook examples</a></li>
-                        <li><a href="http://twitter.com/hakimel">Follow me on Twitter</a></li>
+                        <li><a href="https://github.com/angular/angular-seed">angular-seed</a></li>
+                        <li><a href="https://github.com/mmrath/angular-seed">angular-seed with RequireJS</a></li>
+                        <li><a href="http://angular-ui.github.com/">Angular-UI</a></li>
+                        <li><a href="groups.google.com/group/angular ">Google groups - AngularJS</a></li>
+
                     </ul>
                 </section>
 

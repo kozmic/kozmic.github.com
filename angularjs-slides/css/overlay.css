@@ -8,3 +8,18 @@
 .reveal .slides>section>section {
     line-height: 1.4em;
 }
+
+.reveal section img {
+    background: none;
+    box-shadow: none;
+    border: none;
+
+}
+
+.reveal pre {
+    width: 100%;
+}
+
+.reveal code {
+    max-height: none;
+}
