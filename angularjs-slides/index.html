@@ -278,19 +278,41 @@ FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
 angualar.module('myModule', []).
 config(['depProvider', function(depProvider){
 ...
-}]).
-factory('serviceId', ['depService', function(depService) {
+}).
+factory('serviceId', function(depService) {
 ...
-}]).
-directive('directiveName', ['depService', function(depService) {
+}).
+directive('directiveName', function(depService) {
 ...
-}]).
-filter('filterName', ['depService', function(depService) {
+}).
+filter('filterName', function(depService) {
 ...
-}]).
-run(['depService', function(depService) {
+}).
+run(function(depService) {
 ...
-}]);
+});
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>Dependency injection IRL example</h2>
+
+                    <pre><code>
+var RealLifeApp = angular.module('RealLifeApp', [
+    'ngSanitize',
+    'realLifeRoutes',
+    'services',
+    'jobs',
+    'loader',
+    'ajaxErrorHandler',
+    'ajaxHeaderSetup',
+    'timeoutInterceptor',
+    'realLifeDirectives',
+    'cmsDirectives',
+    'filters']
+);
                     </code></pre>
 
                     <aside class="notes"></aside>
@@ -491,7 +513,8 @@ expect(mode).toEqual('app');
                         <li><a href="https://github.com/angular/angular-seed">angular-seed</a></li>
                         <li><a href="https://github.com/mmrath/angular-seed">angular-seed with RequireJS</a></li>
                         <li><a href="http://angular-ui.github.com/">Angular-UI</a></li>
-                        <li><a href="groups.google.com/group/angular ">Google groups - AngularJS</a></li>
+                        <li><a href="http://groups.google.com/group/angular ">Google groups - AngularJS</a></li>
+                        <li><a href="http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED">AngularJS tips and tricks</a></li>
 
                     </ul>
                 </section>
@@ -520,7 +543,7 @@ expect(mode).toEqual('app');
 				center: true,
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+				transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/none
 
 				// Optional libraries used to extend on reveal.js
 				dependencies: [
