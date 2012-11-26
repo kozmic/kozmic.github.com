@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Stateless CSRF</title>
+
+		<meta name="author" content="Ståle Pettersen">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+		<link rel="stylesheet" href="css/overlay.css">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h1>Stateless CSRF</h1>
+					<h3>In an Enonic portal environment</h3>
+					<p>
+						<small>Ståle Pettersen / <a href="http://twitter.com/kozmic">@kozmic</a> </small>
+					</p>
+				</section>
+
+                <section>
+                    <h2>Context</h2>
+
+                    <ul>
+                        <li>
+                            Single page Javascript-applications
+                        </li>
+                        <li>
+                            Enonic portal
+                        </li>
+                        <li>
+                            JS apps calls REST-backend directly
+                        </li>
+                        <li>
+                            REST-backend is stateless (doh!)
+                        </li>
+                    </ul>
+
+                    <aside class="notes">
+                        Ikke alltid "REST" er stateless, noen har f.eks lurt inn noe på session-objektet.
+                    </aside>
+                </section>
+
+
+                <section>
+                    <h2>Stateless CSRF-token</h2>
+
+                    <ul>
+                        <li>key = obfuscation-algorithm(static key, not-exposed-user-specific-data )</li>
+                        <li>CSRF-token = HMAC-256(key, user + day of year)</li>
+                        <li>Token valid for maxmimum 48 hours</li>
+                        <li>Protect static key</li>
+                        <li>Long static key to protect against offline bruteforce attack</li>
+                    </ul>
+
+                    <aside class="notes">
+                        <ul>
+                            <li>Brukerdata blir automatisk satt på alle request av Webseal + Tomcat Valve</li>
+                            <li>Obfuskert algorithm kan f.eks være xor-e statisk nøkkel med brukerdata</li>
+                            <li>Viktig at statisk nøkkel lagres sikkert på server så ingen internt kan stjele denne</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Flow</h2>
+
+                    <p>
+                        <img src="img/system-overview.png" alt="System"/>
+                    </p>
+
+                    <aside class="notes">
+                        <ul>
+                            <li>Vi ønsker ikke at en applikasjon skal starte opp uten at vi har token, uansett trenger vi som regel andre grunndata i tillegg til token</li>
+                            <li>Sidemal som brukes av applikasjoner har kaller på httpPlugin som henter token, sender med http headere fra brukeren</li>
+                            <li>Sidemalen outputer alltid CSRF-token som en meta-tag i siden</li>
+                            <li>Sidemalen drar inn javascript som setter opp jQuery AJAX slik at token alltid kommer med, for AngularJS må vi sette opp en interceptor selv</li>
+                            <li>Filter i alle applikasjoner som tar tak i headeren og verifiserer token (for alle requester som ikke er GET, OPTIONS, HEAD)</li>
+                            <li>Filteret kaller på klasse som ligger på Tomcat-en, slik at det er enkelt å bytte ut i alle applikasjoner som kjører på samme Tomcat</li>
+                            <li>Alle applikasjoner gjør kun endringer ved POST</li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Usage</h2>
+
+                    <ul>
+                        <li>JS apps using jQuery for XHR doesn't need to do anything</li>
+                        <li>Backend server configure token-verifier-filter</li>
+                        <li>REST endpoints should never change state with:
+                            <ul>
+                                <li>GET</li>
+                                <li>OPTIONS</li>
+                                <li>HEAD</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+				<section>
+					<h1>THE END</h1>
+					<h3>Ståle Pettersen / <a href="https://twitter.com/kozmic">@kozmic</a></h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					/*{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },*/
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
