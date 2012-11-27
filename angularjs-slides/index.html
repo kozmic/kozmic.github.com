@@ -89,6 +89,16 @@
                 </section>
 
                 <section>
+                    <h2>TL;DR TL;DR</h2>
+
+                    <p>
+                        AngularJS is a HTML compiler running in the browser
+                    </p>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
                     <h2>MVVM-ish</h2>
                     <table>
                         <tr>
@@ -134,10 +144,10 @@
 
                     <ul>
                         <li>
-                            Provides $scope to view
+                            Populates $scope through service or factory
                         </li>
                         <li>
-                            Populates $scope through service or factory
+                            Provides $scope to view
                         </li>
                     </ul>
 
@@ -311,17 +321,17 @@ run(function(depService) {
                     <pre><code>
 var RealLifeApp = angular.module('RealLifeApp', [
     'ngSanitize',
-    'realLifeRoutes',
+    'routes',
     'services',
     'jobs',
     'loader',
+    'filters',
     'ajaxErrorHandler',
     'ajaxHeaderSetup',
     'timeoutInterceptor',
-    'realLifeDirectives',
-    'cmsDirectives',
-    'filters']
-);
+    'specialDirectives',
+    'cmsTextDirectives'
+]);
                     </code></pre>
 
                     <aside class="notes"></aside>
@@ -406,7 +416,73 @@ var MyAppDev = angular.module('MyAppDev', ['MyApp', 'ngMockE2E']);
                 </section>
 
                 <section>
+                    <h2>Directive - API</h2>
+                    <pre><code>
+myApp.directive('directiveName', function() {
+  return {
+    priority: 0,
+    scope: { localName:'@myAttr' },
+    template: '&lt;div>&lt;/div>',
+    templateUrl: 'directive.html',
+    replace: true,
+    restrict: 'EACM',
+    controller: function
+    compile: function compile(tElement, tAttrs, transclude) {
+      return {
+        pre: function preLink(scope, iElement, iAttrs, controller) {..},
+        post: function postLink(scope, iElement, iAttrs, controller) {..}
+      }
+    },
+    link: function postLink(scope, iElement, iAttrs) {..}
+  }
+});
+                    </code></pre>
+                    <p>Usage:</p>
+                    <pre><code>
+&lt;directive-name/> &lt;div class="directive-name"/>
+&lt;div directive-name/>&lt;!-- directive: directive-name -->
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Directives</h2>
+
+                    <p>
+                        Usually small and easy to understand
+                    </p>
+                    <ul>
+                        <li>
+                            link
+                        </li>
+                        <li>
+                            replace and templateUrl
+                        </li>
+                    </ul>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
                     <h2>Directives - Simple</h2>
+
+                    <pre><code>
+myApp.directive('picture', function () {
+  return {
+    restrict: 'E',
+    replace: false,
+    link: function (scope, element, attrs) {
+      if (scope.$root.isOldIE) {
+        scope.imageSrc = "img/" + scope.image.src;
+
+      } else {
+        scope.imageSrc = "data:" + scope.image.mimeType + ";base64," + scope.image.data;
+      }
+    },
+    template: '&lt;img src="{{imageSrc}}"/>',
+    replace: true
+  }
+})
+                    </code></pre>
 
                 </section>
 
