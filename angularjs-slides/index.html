@@ -522,15 +522,51 @@ angular.module('myRoutes', [], function($routeProvider, $locationProvider) {
 });
                     </code></pre>
 
-                    <aside class="notes"></aside>
+                    <aside class="notes">
+                        merk at templates er partials og renderes i ng-view
+                    </aside>
                 </section>
 
                 <section>
                     <h2>Validation</h2>
 
                     <p>
-
+                        Built-in
                     </p>
+                    <ul>
+                        <li>HTML5 Input types: text, number, url, email, radio, checkbox</li>
+                        <li>Directives: required, pattern, minlength, maxlength, min, max</li>
+                        <li>Build your own validation directives</li>
+                        <li>novalidate to disable browser performing validation</li>
+                    </ul>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>Validation - Example</h2>
+
+                    <pre><code>
+&lt;form name="form" class="css-form" novalidate>
+  Name:
+  &lt;input type="text" ng-model="user.name" name="uName" required />
+  E-mail:
+  &lt;input type="email" ng-model="user.email" name="uEmail" required/>
+
+  &lt;div ng-show="form.uEmail.$dirty && form.uEmail.$invalid">
+    Invalid:
+    &lt;span ng-show="form.uEmail.$error.required">Email required&lt;/span>
+    &lt;span ng-show="form.uEmail.$error.email">Invalid email&lt;/span>
+  &lt;/div>
+
+  Gender:
+  &lt;input type="radio" ng-model="user.gender" value="male" />male
+  &lt;input type="radio" ng-model="user.gender" value="female" />female
+
+&lt;button ng-click="update(user)"
+        ng-disabled="form.$invalid || isUnchanged(user)">SAVE&lt;/button>
+&lt;/form>
+                    </code></pre>
 
                     <aside class="notes"></aside>
                 </section>
@@ -574,21 +610,6 @@ expect(mode).toEqual('app');
                 </section>
 
                 <section>
-                    <h2>Challenges</h2>
-
-                    <ul>
-                        <li>
-                            Nested views (ng-include works, but feels wrong)
-                        </li>
-                        <li>
-                            Global dialog behavior
-                        </li>
-                    </ul>
-
-                    <aside class="notes"></aside>
-                </section>
-
-                <section>
                     <h2>Good resources</h2>
                     <ul>
                         <li><a href="http://angularjs.org/">angularjs.org</a></li>
@@ -608,6 +629,10 @@ expect(mode).toEqual('app');
 				<section>
 					<h1>THE END</h1>
 					<h3>BY Ståle Pettersen / <a href="https://twitter.com/kozmic">@kozmic</a></h3>
+
+                    <p>
+                        Demo app: <a href="http://kozmic.github.com/angular-demo/">http://kozmic.github.com/angular-demo/</a>
+                    </p>
 				</section>
 
 			</div>
