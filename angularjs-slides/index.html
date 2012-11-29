@@ -51,7 +51,7 @@
                             Developed by Google
                         </li>
                         <li>
-                            MVW
+                            MVC-ish
                         </li>
                         <li>
                             Extend HTML with your own components
@@ -84,28 +84,40 @@
                             <li>
                                 Et global objekt, "angular", resten er DI.
                             </li>
+                            <li>
+                                29kB
+                            </li>
                         </ul>
                     </aside>
                 </section>
 
                 <section>
-                    <h2>MVW</h2>
+                    <h2>AngularJS objects</h2>
+
+                    <p>All attributes and objects starting with $ are AngularJS objects.</p>
+                </section>
+
+                <section>
+                    <h2>MVC-ish</h2>
                     <table>
                         <tr>
                             <td><strong>Model:</strong></td>
-                            <td>Attributes on a $scope Plain Javascript</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Controller:</strong></td>
-                            <td>Sets initial state of $scope and exposes helper methods for view</td>
+                            <td>Plain Javascript</td>
                         </tr>
                         <tr>
                             <td><strong>View:</strong></td>
-                            <td>Resulting HTML rendered markup (including directives) with bindings</td>
+                            <td>HTML templates (including custom components) bound to model</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Controller:</strong></td>
+                            <td>Sets model on $scope and exposes helper methods for view</td>
                         </tr>
                     </table>
                     
-                    <aside class="notes"></aside>
+                    <aside class="notes">
+                        Model: Plain javascript som settes som attributter på $scope i controller
+                        Directives minner om W3 Web Components eller Mozillas <a href="http://x-tag.org">X-Tags</a>
+                    </aside>
                 </section>
 
 
@@ -130,24 +142,23 @@
 
                     <ul>
                         <li>
-                            Populates $scope through service or factory
+                            Usually populates $scope through services or factories
                         </li>
                         <li>
-                            Provides $scope to view
+                            Contains helper methods for view
                         </li>
                     </ul>
 
-                    <aside class="notes"></aside>
+                    <aside class="notes">
+                        Funksjoner på $scope tilgjengelig fra template
+                    </aside>
                 </section>
 
-                <section>
+                                <section>
                     <h2>Controller</h2>
 
                     <pre><code>
 var SimpleCtrl = function ($scope) {
-
-    $scope.title = "SimpleCtrl fantastic title";
-    $scope.footer = "My Footer ";
 
     $scope.people = [
         {name: 'Jøran Lillesand', age: 28, tronder: true},
@@ -172,9 +183,43 @@ var SimpleCtrl = function ($scope) {
                 </section>
 
                 <section>
+                    <h2>Controller with Service</h2>
+
+                    <pre><code>
+var SimpleCtrl = function ($scope, PeopleService) {
+
+    $scope.people = PeopleService.get();
+
+    $scope.addPerson = function() {
+        PeopleService.save({name: $scope.name, age: $scope.age});
+        $scope.name = "";
+        $scope.age = "";
+    };
+
+    $scope.deletePerson = function (person) {
+        PeopleService.delete(person);
+    };
+
+}
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+
+                <section>
                     <h2>Data-binding</h2>
 
                     <ul>
+                        <li>
+                            Two-way binding
+                        </li>
+                        <li>
+                            Update are fast!
+                            <ul>
+                                <li>Soon O(1) with Object.observe()</li>
+                            </ul>
+                        </li>
                         <li>
                             Uses dirty checking instead of change listeners
                         </li>
@@ -262,10 +307,14 @@ var SimpleCtrl = function ($scope) {
                         <li>
                             orderBy
                         </li>
-                        <pre><code>
-&lt;div ng-repeat="question in activeStep.questions | filter:{ 'visible':true } | orderBy:'sequence'">
-                        </code></pre>
                     </ul>
+<br /><br />
+                    <pre><code>
+&lt;div ng-repeat="car in cars | filter:{ 'visible':true }">
+  {{car.model}} {{car.registrationNumber}}
+&lt;/div>
+&lt;div ng-repeat="car in cars | orderBy:'sequence' }">
+                    </code></pre>
 
                     <aside class="notes">
                     </aside>
@@ -289,6 +338,8 @@ var SimpleCtrl = function ($scope) {
                 <section>
                     <h2>Dependency injection</h2>
 
+                    <p>As in Java, has many benefits</p>
+
                     <p>
                         Magic DI
                     </p>
@@ -308,6 +359,21 @@ FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
                         Alternativt alt på en gang:
                         var FancyCtrl = ['$scope', '$location', 'FancyService', function($scope, $http) { /**/ }];
                     </aside>
+                </section>
+
+                <section>
+                    <h2>Dependency injection</h2>
+
+                    <p>
+                        Service & $resource
+                    </p>
+
+                    <pre><code>
+foodMeApp.service('Restaurant', function($resource) {
+    return $resource('/api/restaurant/:id', {id: '@id'});
+});
+                    </code></pre>
+
                 </section>
 
                 <section>
@@ -453,7 +519,9 @@ myApp.directive('directiveName', function() {
         post: function postLink(scope, iElement, iAttrs, controller) {..}
       }
     },
-    link: function postLink(scope, iElement, iAttrs) {..}
+    link: function postLink(scope, iElement, iAttrs) {
+      scope.$watch('name', function(newVal, oldVal) {..}
+    }
   }
 });
                     </code></pre>
@@ -493,19 +561,20 @@ myApp.directive('directiveName', function() {
 myApp.directive('picture', function () {
   return {
     restrict: 'E',
-    replace: false,
+    replace: true,
+    template: '&lt;img src="{{imageSrc}}"/>',
     link: function (scope, element, attrs) {
-      if (scope.$root.isOldIE) {
+
+      if (scope.isOldIE) {
         scope.imageSrc = "img/" + scope.image.src;
 
       } else {
-        scope.imageSrc = "data:" + scope.image.mimeType + ";base64," + scope.image.data;
+        scope.imageSrc = "data:" + scope.image.mimeType +
+                         ";base64," + scope.image.data;
       }
-    },
-    template: '&lt;img src="{{imageSrc}}"/>',
-    replace: true
+    }
   }
-})
+});
                     </code></pre>
 
                 </section>
@@ -597,6 +666,39 @@ angular.module('myRoutes', [], function($routeProvider, $locationProvider) {
 
                 <section>
                     <h2>Testing</h2>
+
+                    <ul>
+                        <li>
+                            Built-in Jasmine mocks (angular-mocks.js)
+                        </li>
+                        <li>
+                            Jasmine + Testacular =)
+                        </li>
+                    </ul>
+
+                    <pre><code>
+var $scope, ctrl;
+
+// DI to get $rootScope and create your controller scope
+beforeEach(inject(function($rootScope) {
+    $scope = $rootScope.$new();
+}));
+
+it('Should not be initialized', inject(function($controller) {
+    ctrl = $controller('PeopleCtrl', {
+        $scope: $scope
+    });
+    expect($scope.initialized).toBe(false);
+}));
+                    </code></pre>
+                    
+                    <aside class="notes">
+                        Testacular ble skrevet for å teste AngularJS :)
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Testing</h2>
                     <pre><code>
 angular.module('myApplicationModule', [])
 .value('mode', 'app')
@@ -636,16 +738,17 @@ expect(mode).toEqual('app');
                 <section>
                     <h2>Good resources</h2>
                     <ul>
+                        <li><a href="http://www.yearofmoo.com/2012/08/use-angularjs-to-power-your-web-application.html">yearofmoo.com</a></li>
                         <li><a href="http://angularjs.org/">angularjs.org</a></li>
-                        <li><a href="http://blog.angularjs.org/">blog.angularjs.org/</a></li>
+                        <li><a href="http://blog.angularjs.org/">blog.angularjs.org</a></li>
                         <li><a href="http://www.youtube.com/user/johnlindquist">John Lindquist @ youtube.com</a></li>
                         <li><a href="http://docs.angularjs.org/cookbook/">AngularJS cookbook examples</a></li>
                         <li><a href="https://github.com/angular/angular-seed">angular-seed</a></li>
-                        <li><a href="https://github.com/mmrath/angular-seed">angular-seed with RequireJS</a></li>
+                        <li><a href="https://github.com/CaryLandholt/AngularFun">Angular Fun + CoffeeScript + RequireJs</a></li>
                         <li><a href="http://angular-ui.github.com/">Angular-UI</a></li>
                         <li><a href="http://groups.google.com/group/angular ">Google groups - AngularJS</a></li>
                         <li><a href="http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED">AngularJS tips and tricks</a></li>
-
+                        <li><a href="http://stackoverflow.com/questions/tagged/angularjs">StackOverflow (1165 Q&A)</a></li>
                     </ul>
                 </section>
 
