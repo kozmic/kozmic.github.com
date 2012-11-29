@@ -89,29 +89,15 @@
                 </section>
 
                 <section>
-                    <h2>TL;DR TL;DR</h2>
-
-                    <p>
-                        AngularJS is a HTML compiler running in the browser
-                    </p>
-
-                    <aside class="notes"></aside>
-                </section>
-
-                <section>
-                    <h2>MVVM-ish</h2>
+                    <h2>MVW</h2>
                     <table>
                         <tr>
                             <td><strong>Model:</strong></td>
-                            <td>Plain Javascript</td>
-                        </tr>
-                        <tr>
-                            <td><strong>ViewModel:</strong></td>
-                            <td>$scope object with tiny API which is dirty checked</td>
+                            <td>Attributes on a $scope Plain Javascript</td>
                         </tr>
                         <tr>
                             <td><strong>Controller:</strong></td>
-                            <td>Set initial state of $scope and defines behavior when $scope change</td>
+                            <td>Sets initial state of $scope and exposes helper methods for view</td>
                         </tr>
                         <tr>
                             <td><strong>View:</strong></td>
@@ -246,6 +232,40 @@ var SimpleCtrl = function ($scope) {
 &lt;h2 ng-bind="heading">&lt;/h2>
 
                     </code></pre>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Templates</h2>
+
+                    <ul>
+                        <li>
+                            ng-show / ng-hide
+                        </li>
+                        <li>
+                            ng-class
+                        </li>
+                        <li>
+                            ng-repeat
+                        </li>
+                        <li>
+                            ng-model
+                        </li>
+                        <li>
+                            ng-controller
+                        </li>
+                        <li>
+                            filter
+                        </li>
+                        <li>
+                            orderBy
+                        </li>
+                        <pre><code>
+&lt;div ng-repeat="question in activeStep.questions | filter:{ 'visible':true } | orderBy:'sequence'">
+                        </code></pre>
+                    </ul>
 
                     <aside class="notes">
                     </aside>
@@ -442,6 +462,10 @@ myApp.directive('directiveName', function() {
 &lt;directive-name/> &lt;div class="directive-name"/>
 &lt;div directive-name/>&lt;!-- directive: directive-name -->
                     </code></pre>
+
+                    <aside class="notes">
+                        DOM manipulatsjon kun lov i link og compile i AngularJS applikasjoner
+                    </aside>
                 </section>
 
                 <section>
