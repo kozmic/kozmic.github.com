@@ -145,7 +145,7 @@
                             Usually populates $scope through services or factories
                         </li>
                         <li>
-                            Contains helper methods for view
+                            Contains helper functions for view
                         </li>
                     </ul>
 
@@ -215,7 +215,7 @@ var SimpleCtrl = function ($scope, PeopleService) {
                             Two-way binding
                         </li>
                         <li>
-                            Update are fast!
+                            Updates are fast!
                             <ul>
                                 <li>Soon O(1) with Object.observe()</li>
                             </ul>
@@ -223,21 +223,7 @@ var SimpleCtrl = function ($scope, PeopleService) {
                         <li>
                             Uses dirty checking instead of change listeners
                         </li>
-                        <li>
-                            ($apply -&gt;) $digest -&gt; $watch
-                        </li>
-                        <li>
-                            To trigger changes in AngularJS from outside AngularJS:
-                            <pre><code>$scope.$apply(SCOPE-CHANGING-CODE-HERE)</code></pre>
-                        </li>
                     </ul>
-
-                    <footer>
-                        <ul>
-                            <li>Lifecycle details: http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/</li>
-                        </ul>
-
-                    </footer>
 
                     <aside class="notes">
                         <ul>
@@ -254,7 +240,13 @@ var SimpleCtrl = function ($scope, PeopleService) {
                                 Digest har en 10 cycle limit, får du denne feilen har du en sirkulær avhengighet.
                             </li>
                             <li>
-                                $scope.$apply er nice for console ting med AngularJS debug console
+                                $scope.$apply er nice for console ting med AngularJS debug console (+jQuery plugins)
+                            </li>
+                            <li>
+                                Lifecycle details: http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/
+                            </li>
+                            <li>
+                                ($apply -&gt;) $digest -&gt; $watch
                             </li>
                         </ul>
                     </aside>
@@ -272,10 +264,16 @@ var SimpleCtrl = function ($scope, PeopleService) {
                         </li>
                     </ul>
                     <pre><code>
-&lt;h2>{{ heading }}&lt;/h2>
-&lt;h2 ng-model="heading">&lt;/h2>
-&lt;h2 ng-bind="heading">&lt;/h2>
-
+&lt;div ng-controller="FancyCtrl">
+   &lt;h2>{{ heading }}&lt;/h2>
+   &lt;h2 ng-model="heading">&lt;/h2>
+   &lt;h2 ng-bind="heading">&lt;/h2>
+&lt;/div>
+                    </code></pre>
+                    <pre><code>
+var FancyCtrl = function($scope) {
+   $scope.heading = "My heading";
+}
                     </code></pre>
 
                     <aside class="notes">
@@ -320,7 +318,7 @@ var SimpleCtrl = function ($scope, PeopleService) {
                     </aside>
                 </section>
 
-                <section>
+                <!--section>
                     <h2>
                         Template lifecycle
                     </h2>
@@ -333,27 +331,36 @@ var SimpleCtrl = function ($scope, PeopleService) {
                     <aside class="notes">
                         AngularJS: Browser renderer template, DOM deretter. Andre: Reparser String-template med data ved update
                     </aside>
-                </section>
+                </section-->
 
                 <section>
                     <h2>Dependency injection</h2>
 
-                    <p>As in Java, has many benefits</p>
+                    <ul>
+                        <li>As in Java, has many benefits</li>
+                        <li>Automatic, no need for configuration</li>
+                    </ul>
+                    <br /><br />
 
-                    <p>
-                        Magic DI
-                    </p>
+                    <p>Service that is injectable</p>
+                    <pre><code>
+angular.module('services', ['ngResource'])
+    .service('FancyService', function($resource){ ... });
+                    </code></pre>
+                    <p>Inject service into controller</p>
                     <pre><code>
 var FancyCtrl = function($scope, $location, FancyService) {
     // Your batshit fancy code here
 }
                     </code></pre>
-                    <p>
+
+
+                    <!--p>
                         Minifiable
                     </p>
                     <pre><code>
 FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
-                    </code></pre>
+                    </code></pre-->
 
                     <aside class="notes">
                         Alternativt alt på en gang:
@@ -369,7 +376,7 @@ FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
                     </p>
 
                     <pre><code>
-foodMeApp.service('Restaurant', function($resource) {
+myApp.service('Restaurant', function($resource) {
     return $resource('/api/restaurant/:id', {id: '@id'});
 });
                     </code></pre>
@@ -428,14 +435,14 @@ var RealLifeApp = angular.module('RealLifeApp', [
 
                     <ul>
                         <li>
-                            Buildt in service $resource:
+                            Built in service $resource:
                             <pre><code>$resource(url[, paramDefaults][, actions]);</code></pre>
                         </li>
                         <li>
                             Default returns: query, save, remove
                         </li>
                         <li>
-                            Buildt on top of $http (ajax, promise, interceptors, exception handling, >)]}',</strong>, X-XSRF-TOKEN header)
+                            Built on top of $http (promise, interceptors, exception handling)
                         </li>
                     </ul>
                     <pre><code>
@@ -449,6 +456,19 @@ newCard.$save();
                     </code></pre>
 
                     <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>REST security</h2>
+
+                    <ul>
+                        <li>
+                            Adds X-Requested-By header with X-XSRF-TOKEN cookie value by default
+                        </li>
+                        <li>
+                            Automatically stripts: &gt;)]}',
+                        </li>
+                    </ul>
                 </section>
 
                 <section>
@@ -726,6 +746,9 @@ expect(mode).toEqual('app');
                     <ul>
                         <li>
                             Chrome Extension: AngularJS Batarang
+                        </li>
+                        <li>
+                            Intellij IDEA plugin: AngularJS
                         </li>
                         <li>
                             angular.mock.debug
