@@ -91,8 +91,8 @@
                     <h2>Stateless CSRF-token</h2>
 
                     <ul>
-                        <li>key = obfuscation-algorithm(static key, not-exposed-user-specific-data )</li>
                         <li>CSRF-token = HMAC-256(key, user + day of year)</li>
+                        <li>key = obfuscation-algorithm(static key, not-exposed-user-specific-data )</li>
                         <li>Token valid for maxmimum 48 hours</li>
                         <li>Protect static key</li>
                         <li>Long static key to protect against offline bruteforce attack</li>
