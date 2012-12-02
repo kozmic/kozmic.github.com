@@ -94,7 +94,7 @@
                 <section>
                     <h2>AngularJS objects</h2>
 
-                    <p>All attributes and objects starting with $ are AngularJS objects.</p>
+                    <p>All attributes and objects starting with $ are built into AngularJS.</p>
                 </section>
 
                 <section>
@@ -215,13 +215,13 @@ var SimpleCtrl = function ($scope, PeopleService) {
                             Two-way binding
                         </li>
                         <li>
-                            Updates are fast!
+                            Uses dirty checking instead of change listeners
+                        </li>
+                        <li>
+                            Updates are fast enough (2k easy)
                             <ul>
                                 <li>Soon O(1) with Object.observe()</li>
                             </ul>
-                        </li>
-                        <li>
-                            Uses dirty checking instead of change listeners
                         </li>
                     </ul>
 
@@ -468,6 +468,9 @@ newCard.$save();
                         <li>
                             Automatically stripts: &gt;)]}',
                         </li>
+                        <li>
+                            Content Security Policy support (ng-csp)
+                        </li>
                     </ul>
                 </section>
 
@@ -532,7 +535,8 @@ myApp.directive('directiveName', function() {
     templateUrl: 'directive.html',
     replace: true,
     restrict: 'EACM',
-    controller: function
+    controller: function,
+    transclude: true,
     compile: function compile(tElement, tAttrs, transclude) {
       return {
         pre: function preLink(scope, iElement, iAttrs, controller) {..},
@@ -582,15 +586,14 @@ myApp.directive('picture', function () {
   return {
     restrict: 'E',
     replace: true,
-    template: '&lt;img src="{{imageSrc}}"/>',
+    template: '&lt;img />',
     link: function (scope, element, attrs) {
 
       if (scope.isOldIE) {
-        scope.imageSrc = "img/" + scope.image.src;
-
+          element.attr('src', 'img/' + scope.image.src;
       } else {
-        scope.imageSrc = "data:" + scope.image.mimeType +
-                         ";base64," + scope.image.data;
+          element.attr('src','data:' + scope.image.mimeType +
+                             ';base64,' + scope.image.data;
       }
     }
   }
@@ -717,28 +720,6 @@ it('Should not be initialized', inject(function($controller) {
                     </aside>
                 </section>
 
-                <section>
-                    <h2>Testing</h2>
-                    <pre><code>
-angular.module('myApplicationModule', [])
-.value('mode', 'app')
-.value('version', 'v1.0.1');
-
-describe('MyApp', function() {
-
-// You need to load modules that you want to test,
-// it loads only the "ng" module by default.
-beforeEach(module('myApplicationModule'));
-
-// inject() is used to inject arguments of all given functions
-it('should provide a version', inject(function(mode, version) {
-expect(version).toEqual('v1.0.1');
-expect(mode).toEqual('app');
-}));
-</code></pre>
-                    <p>angular.mock.inject with jasmine</p>
-                    <aside class="notes"></aside>
-                </section>
 
                 <section>
                     <h2>Tools</h2>
@@ -781,7 +762,8 @@ expect(mode).toEqual('app');
 					<h3>BY Ståle Pettersen / <a href="https://twitter.com/kozmic">@kozmic</a></h3>
 
                     <p>
-                        Demo app: <a href="http://kozmic.github.com/angular-demo/">http://kozmic.github.com/angular-demo/</a>
+                        Demo app: <a href="https://github.com/kozmic/angularjs-demo">https://github.com/kozmic/angularjs-demo</a>
+                        Slides: <a href="http://kozmic.github.com/angularjs-slides/">http://kozmic.github.com/angularjs-slides/</a>
                     </p>
 				</section>
 
