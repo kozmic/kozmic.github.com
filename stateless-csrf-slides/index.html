@@ -47,11 +47,11 @@
                     <h2>Context</h2>
 
                     <ul>
+			<li>
+				Enonic portal
+			</li>
                         <li>
                             Single page Javascript-applications
-                        </li>
-                        <li>
-                            Enonic portal
                         </li>
                         <li>
                             JS apps calls REST-backend directly
@@ -63,27 +63,6 @@
 
                     <aside class="notes">
                         Ikke alltid "REST" er stateless, noen har f.eks lurt inn noe på session-objektet.
-                    </aside>
-                </section>
-
-
-                <section>
-                    <h2>Stateless CSRF-token</h2>
-
-                    <ul>
-                        <li>key = obfuscation-algorithm(static key, not-exposed-user-specific-data )</li>
-                        <li>CSRF-token = HMAC-256(key, user + day of year)</li>
-                        <li>Token valid for maxmimum 48 hours</li>
-                        <li>Protect static key</li>
-                        <li>Long static key to protect against offline bruteforce attack</li>
-                    </ul>
-
-                    <aside class="notes">
-                        <ul>
-                            <li>Brukerdata blir automatisk satt på alle request av Webseal + Tomcat Valve</li>
-                            <li>Obfuskert algorithm kan f.eks være xor-e statisk nøkkel med brukerdata</li>
-                            <li>Viktig at statisk nøkkel lagres sikkert på server så ingen internt kan stjele denne</li>
-                        </ul>
                     </aside>
                 </section>
 
@@ -106,6 +85,27 @@
                         </ul>
                     </aside>
                 </section>
+
+
+                <section>
+                    <h2>Stateless CSRF-token</h2>
+
+                    <ul>
+                        <li>key = obfuscation-algorithm(static key, not-exposed-user-specific-data )</li>
+                        <li>CSRF-token = HMAC-256(key, user + day of year)</li>
+                        <li>Token valid for maxmimum 48 hours</li>
+                        <li>Protect static key</li>
+                        <li>Long static key to protect against offline bruteforce attack</li>
+                    </ul>
+
+                    <aside class="notes">
+                        <ul>
+                            <li>Brukerdata blir automatisk satt på alle request av Webseal + Tomcat Valve</li>
+                            <li>Obfuskert algorithm kan f.eks være xor-e statisk nøkkel med brukerdata</li>
+                            <li>Viktig at statisk nøkkel lagres sikkert på server så ingen internt kan stjele denne</li>
+                        </ul>
+                    </aside>
+                </section>              
 
                 <section>
                     <h2>Usage</h2>
