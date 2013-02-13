@@ -344,7 +344,7 @@ var PeopleCtrl = function($scope) {
 
                     <p>Service that is injectable</p>
                     <pre><code>
-myApp.module('services').service('PeopleService', function(){ ... });
+myApp.service('PeopleService', function(){ ... });
                     </code></pre>
                     <p>Inject service into controller</p>
                     <pre><code>
@@ -353,17 +353,10 @@ var PeopleCtrl = function($scope, PeopleService) {
 }
                     </code></pre>
 
-
-                    <!--p>
-                        Minifiable
-                    </p>
-                    <pre><code>
-PeopleCtrl.$inject = ['$scope', 'PeopleService'];
-                    </code></pre-->
-
                     <aside class="notes">
                         Alternativt alt på en gang:
-                        var FancyCtrl = ['$scope', 'PeopleService', function($scope, $http) { /**/ }];
+                        var PeopleCtrl = ['$scope', 'PeopleService', function($scope, PeopleService) { }];
+                        PeopleCtrl.$inject = ['$scope', 'PeopleService']; // Minification
                     </aside>
                 </section>
 
@@ -411,7 +404,7 @@ run(function(depService) {
                 </section>
 
                 <section>
-                    <h2>Dependency injection IRL example</h2>
+                    <h2>Out application structure</h2>
 
                     <pre><code>
 var RealLifeApp = angular.module('RealLifeApp', [
@@ -432,69 +425,16 @@ var RealLifeApp = angular.module('RealLifeApp', [
                 </section>
 
                 <section>
-                    <h2>REST</h2>
-
-                    <ul>
-                        <li>
-                            Built in service $resource:
-                            <pre><code>$resource(url[, paramDefaults][, actions]);</code></pre>
-                        </li>
-                        <li>
-                            Default returns: query, save, remove
-                        </li>
-                        <li>
-                            Built on top of $http (promise, interceptors, exception handling)
-                        </li>
-                    </ul>
+                    <h2>Reuse directives across projects</h2>
                     <pre><code>
-var CreditCard = $resource('/user/:userId/card/:cardId',
-    {userId:123, cardId:'@id'}, {
-    charge: {method:'POST', params:{charge:true}}
-});
-var newCard = new CreditCard({number:'0123'});
-newCard.name = "Mike Smith";
-newCard.$save();
+// Common routes used by multiple apps
+angular.module('routes.common', function($routeProvider) {});
+
+// App1 specific routes which loads common
+app1.module('routes.app1', function($routeProvider, 'routes.common') {});
+
+var app1 = angular.module('myApp1', ['routes.app1']);
                     </code></pre>
-
-                    <aside class="notes"></aside>
-                </section>
-
-                <section>
-                    <h2>REST security</h2>
-
-                    <ul>
-                        <li>
-                            Adds X-Requested-By header with X-XSRF-TOKEN cookie value by default
-                        </li>
-                        <li>
-                            Automatically stripts: &gt;)]}',
-                        </li>
-                        <li>
-                            Content Security Policy support (ng-csp)
-                        </li>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>REST mocking</h2>
-
-                    <pre><code>
-// Trick to mock XHR in dev-mode or in end-to-end tests
-var MyAppDev = angular.module('MyAppMock', ['MyApp', 'ngMockE2E']);
-    MyAppDev.run(function($httpBackend) {
-
-    $httpBackend.whenGET('/simple/ping').respond('pong');
-    $httpBackend.whenGET('/simple/cards/').respond(window.data.cards);
-}
-                    </code></pre>
-                    <pre><code>
-&lt;html ng-app="MyApp">
-                    </code></pre>
-					<pre><code>
-&lt;html ng-app="MyAppMock">
-					</code></pre>
-
-                    <aside class="notes"></aside>
                 </section>
 
                 <section>
@@ -696,6 +636,72 @@ angular.module('myRoutes', [], function($routeProvider, $locationProvider) {
                 </section>
 
                 <section>
+                    <h2>REST</h2>
+
+                    <ul>
+                        <li>
+                            Built in service $resource:
+                            <pre><code>$resource(url[, paramDefaults][, actions]);</code></pre>
+                        </li>
+                        <li>
+                            Default returns: get, query, save, delete
+                        </li>
+                        <li>
+                            Built on top of $http (promise, interceptors, exception handling)
+                        </li>
+                    </ul>
+                    <pre><code>
+var CreditCard = $resource('/card/:cardId', {cardId:'@id'});
+
+var card = CreditCard.$get({ id:55555 }); // Empty object initially
+
+var newCard = new CreditCard({ name: 'Staale Steel' }, { number:'0123' });
+newCard.$save();
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>REST security</h2>
+
+                    <ul>
+                        <li>
+                            Adds X-Requested-By header with X-XSRF-TOKEN cookie value by default
+                        </li>
+                        <li>
+                            Automatically stripts: &gt;)]}',
+                        </li>
+                        <li>
+                            Content Security Policy support (ng-csp)
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>REST mocking</h2>
+
+                    <pre><code>
+// Trick to mock XHR in dev-mode or in end-to-end tests
+var MyAppDev = angular.module('MyAppMock', ['MyApp', 'ngMockE2E']);
+
+MyAppDev.run(function($httpBackend) {
+    $httpBackend.whenGET('/simple/ping').respond('pong');
+    $httpBackend.whenGET('/simple/cards/').respond(window.data.cards);
+}
+                    </code></pre>
+                    <pre><code>
+                        &lt;html ng-app="MyApp">
+                    </code></pre>
+					<pre><code>
+                        &lt;html ng-app="MyAppMock">
+                    </code></pre>
+
+                    <aside class="notes"></aside>
+                </section>
+
+
+                <section>
                     <h2>Testing</h2>
 
                     <ul>
@@ -711,21 +717,42 @@ angular.module('myRoutes', [], function($routeProvider, $locationProvider) {
 var scope, ctrl;
 
 // DI to get $rootScope and create your controller scope
-beforeEach(inject(function($rootScope) {
-    scope = $rootScope.$new();
+beforeEach(inject(function($rootScope, $controller) {
+    ctrl = $controller('PeopleCtrl', { $scope: $rootScope.$new()});
 }));
 
-it('Should not be initialized', inject(function($controller) {
-    ctrl = $controller('PeopleCtrl', {
-        $scope: scope
-    });
-    expect($scope.initialized).toBe(false);
-}));
+it('Should be initialized', function() {
+    expect(scope.initialized).toBe(true);
+    expect(ctrl.isReady()).toBe(false);
+});
                     </code></pre>
                     
                     <aside class="notes">
                         Testacular ble skrevet for å teste AngularJS :)
                     </aside>
+                </section>
+
+                <section>
+                    <h2>Testing - http mock</h2>
+<pre><code>
+describe('PhoneCat controllers', function() {
+
+  describe('PhoneListCtrl', function(){
+    var scope, ctrl, httpBackend;
+
+    beforeEach(inject(function($httpBackend, $rootScope, $controller) {
+      httpBackend = $httpBackend;
+      httpBackend.expectGET('phones/phones.json').
+          respond([{name: 'Nexus S'}, {name: 'Motorola DROID'}]);
+
+      scope = $rootScope.$new();
+      ctrl = $controller(PhoneListCtrl, {$scope: scope});
+
+      httpBackend.flush();
+    }));
+});
+
+</code></pre>
                 </section>
 
 
