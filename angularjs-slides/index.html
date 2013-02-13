@@ -158,7 +158,7 @@
                     <h2>Controller</h2>
 
                     <pre><code>
-var SimpleCtrl = function ($scope) {
+var PeopleCtrl = function ($scope) {
 
     $scope.people = [
         {name: 'Jøran Lillesand', age: 28, tronder: true},
@@ -186,7 +186,7 @@ var SimpleCtrl = function ($scope) {
                     <h2>Controller with Service</h2>
 
                     <pre><code>
-var SimpleCtrl = function ($scope, PeopleService) {
+var PeopleCtrl = function ($scope, PeopleService) {
 
     $scope.people = PeopleService.get();
 
@@ -246,7 +246,7 @@ var SimpleCtrl = function ($scope, PeopleService) {
                                 Lifecycle details: http://onehungrymind.com/notes-on-angularjs-scope-life-cycle/
                             </li>
                             <li>
-                                ($apply -&gt;) $digest -&gt; $watch
+                                ($apply &rarr;) $digest &rarr; $watch
                             </li>
                         </ul>
                     </aside>
@@ -264,15 +264,15 @@ var SimpleCtrl = function ($scope, PeopleService) {
                         </li>
                     </ul>
                     <pre><code>
-&lt;div ng-controller="FancyCtrl">
-   &lt;h2>{{ heading }}&lt;/h2>
-   &lt;h2 ng-model="heading">&lt;/h2>
-   &lt;h2 ng-bind="heading">&lt;/h2>
+&lt;div ng-controller="PeopleCtrl">
+   &lt;h2>{{ name }}&lt;/h2>
+   &lt;input ng-model="name">&lt;/>
+   &lt;h2 ng-bind="name">&lt;/h2>
 &lt;/div>
                     </code></pre>
                     <pre><code>
-var FancyCtrl = function($scope) {
-   $scope.heading = "My heading";
+var PeopleCtrl = function($scope) {
+   $scope.name = "Ståle";
 }
                     </code></pre>
 
@@ -308,10 +308,10 @@ var FancyCtrl = function($scope) {
                     </ul>
 <br /><br />
                     <pre><code>
-&lt;div ng-repeat="car in cars | filter:{ 'visible':true }">
-  {{car.model}} {{car.registrationNumber}}
+&lt;div ng-repeat="person in people | filter:{ 'visible':true }">
+  {{person.name}} {{person.age}}
 &lt;/div>
-&lt;div ng-repeat="car in cars | orderBy:'sequence' }">
+&lt;div ng-repeat="person in people | orderBy:'age' }">
                     </code></pre>
 
                     <aside class="notes">
@@ -344,12 +344,12 @@ var FancyCtrl = function($scope) {
 
                     <p>Service that is injectable</p>
                     <pre><code>
-angular.module('services', ['ngResource'])
-    .service('FancyService', function($resource){ ... });
+angular.module('services')
+    .service('PeopleService', function(){ ... });
                     </code></pre>
                     <p>Inject service into controller</p>
                     <pre><code>
-var FancyCtrl = function($scope, $location, FancyService) {
+var PeopleCtrl = function($scope, PeopleService) {
     // Your batshit fancy code here
 }
                     </code></pre>
@@ -359,12 +359,12 @@ var FancyCtrl = function($scope, $location, FancyService) {
                         Minifiable
                     </p>
                     <pre><code>
-FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
+PeopleCtrl.$inject = ['$scope', 'PeopleService'];
                     </code></pre-->
 
                     <aside class="notes">
                         Alternativt alt på en gang:
-                        var FancyCtrl = ['$scope', '$location', 'FancyService', function($scope, $http) { /**/ }];
+                        var FancyCtrl = ['$scope', 'PeopleService', function($scope, $http) { /**/ }];
                     </aside>
                 </section>
 
@@ -376,8 +376,8 @@ FancyCtrl.$inject = ['$scope', '$location', 'FancyService'];
                     </p>
 
                     <pre><code>
-myApp.service('Restaurant', function($resource) {
-    return $resource('/api/restaurant/:id', {id: '@id'});
+myApp.service('PeopleService', function($resource) {
+    return $resource('/api/people/:id', {id: '@id'});
 });
                     </code></pre>
 
@@ -391,7 +391,10 @@ angualar.module('myModule', []).
 config(function(depService){
 ...
 }).
-factory('serviceId', function(depService) {
+service('serviceName', function(depService) {
+...
+}).
+factory('factoryName', function(depService) {
 ...
 }).
 directive('directiveName', function(depService) {
@@ -413,17 +416,16 @@ run(function(depService) {
 
                     <pre><code>
 var RealLifeApp = angular.module('RealLifeApp', [
-    'ngSanitize',
     'routes',
     'services',
     'jobs',
+    'questionDirectives',
+    'cmsTextDirectives',
     'loader',
     'filters',
     'ajaxErrorHandler',
     'ajaxHeaderSetup',
-    'timeoutInterceptor',
-    'specialDirectives',
-    'cmsTextDirectives'
+    'timeoutInterceptor'
 ]);
                     </code></pre>
 
@@ -762,7 +764,9 @@ it('Should not be initialized', inject(function($controller) {
 					<h3>BY Ståle Pettersen / <a href="https://twitter.com/kozmic">@kozmic</a></h3>
 
                     <p>
-                        Demo app: <a href="https://github.com/kozmic/angularjs-demo">https://github.com/kozmic/angularjs-demo</a>
+                        Demo: <a href="https://github.com/kozmic/angularjs-demo">https://github.com/kozmic/angularjs-demo</a>
+                    </p>
+                    <p>
                         Slides: <a href="http://kozmic.github.com/angularjs-slides/">http://kozmic.github.com/angularjs-slides/</a>
                     </p>
 				</section>
