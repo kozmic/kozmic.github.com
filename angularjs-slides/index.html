@@ -110,7 +110,7 @@
                         </tr>
                         <tr>
                             <td><strong>Controller:</strong></td>
-                            <td>Sets model on $scope and exposes helper methods for view</td>
+                            <td>Sets model on $scope and watches for changes, in addition to exposing helper methods for view</td>
                         </tr>
                     </table>
                     
@@ -337,15 +337,14 @@ var PeopleCtrl = function($scope) {
                     <h2>Dependency injection</h2>
 
                     <ul>
-                        <li>As in Java, has many benefits</li>
-                        <li>Automatic, no need for configuration</li>
+                        <li>Same benefits as in other languages like Java</li>
+                        <li>Just works&trade;, no configuration</li>
                     </ul>
                     <br /><br />
 
                     <p>Service that is injectable</p>
                     <pre><code>
-angular.module('services')
-    .service('PeopleService', function(){ ... });
+myApp.module('services').service('PeopleService', function(){ ... });
                     </code></pre>
                     <p>Inject service into controller</p>
                     <pre><code>
@@ -480,8 +479,8 @@ newCard.$save();
                     <h2>REST mocking</h2>
 
                     <pre><code>
-// Mocking XHR in dev-mode
-var MyAppDev = angular.module('MyAppDev', ['MyApp', 'ngMockE2E']);
+// Trick to mock XHR in dev-mode or in end-to-end tests
+var MyAppDev = angular.module('MyAppMock', ['MyApp', 'ngMockE2E']);
     MyAppDev.run(function($httpBackend) {
 
     $httpBackend.whenGET('/simple/ping').respond('pong');
@@ -489,8 +488,11 @@ var MyAppDev = angular.module('MyAppDev', ['MyApp', 'ngMockE2E']);
 }
                     </code></pre>
                     <pre><code>
-&lt;html ng-app="MyAppDev">
+&lt;html ng-app="MyApp">
                     </code></pre>
+					<pre><code>
+&lt;html ng-app="MyAppMock">
+					</code></pre>
 
                     <aside class="notes"></aside>
                 </section>
@@ -506,8 +508,11 @@ var MyAppDev = angular.module('MyAppDev', ['MyApp', 'ngMockE2E']);
                             We've already seen some of the built in directives
                         </li>
                         <li>
-                            Can be really simple or complex, and crazy powerful
+                            Can be simple or really complex (powerful stuff!)
                         </li>
+						<li>
+							Resembles Web Components (W3C)
+						</li>
                     </ul>
 
                     <pre><code>
@@ -573,9 +578,13 @@ myApp.directive('directiveName', function() {
                             link
                         </li>
                         <li>
-                            replace and templateUrl
+							template
                         </li>
                     </ul>
+					<br /><br /><br />
+					<h4>
+						Only place DOM-manipulation is allowed!
+					</h4>
 
                     <aside class="notes"></aside>
                 </section>
@@ -584,22 +593,19 @@ myApp.directive('directiveName', function() {
                     <h2>Directives - Simple</h2>
 
                     <pre><code>
-myApp.directive('picture', function () {
+// Example: &lt;p class="DateFormatter" data-date="{{dateFromModel}}"/>
+.directive('DateFormatter', ['DateService', function(DateService) {
   return {
-    restrict: 'E',
-    replace: true,
-    template: '&lt;img />',
-    link: function (scope, element, attrs) {
+    link: function($scope, el, attrs {
+      var inputFormat = attr.inFormat ? attr.inpFormat : 'd.M.yyyy';
+      var outputFormat = attr.outFormat ? attr.outFormat : 'd. MMMM yyyy';
 
-      if (scope.isOldIE) {
-          element.attr('src', 'img/' + scope.image.src;
-      } else {
-          element.attr('src','data:' + scope.image.mimeType +
-                             ';base64,' + scope.image.data;
-      }
+      attr.$observe('date', function(date) {
+          el.text(DateService.convertFormat(date, inFormat, outFormat));
+      });
     }
-  }
-});
+  };
+}])
                     </code></pre>
 
                 </section>
@@ -702,16 +708,16 @@ angular.module('myRoutes', [], function($routeProvider, $locationProvider) {
                     </ul>
 
                     <pre><code>
-var $scope, ctrl;
+var scope, ctrl;
 
 // DI to get $rootScope and create your controller scope
 beforeEach(inject(function($rootScope) {
-    $scope = $rootScope.$new();
+    scope = $rootScope.$new();
 }));
 
 it('Should not be initialized', inject(function($controller) {
     ctrl = $controller('PeopleCtrl', {
-        $scope: $scope
+        $scope: scope
     });
     expect($scope.initialized).toBe(false);
 }));
@@ -744,15 +750,16 @@ it('Should not be initialized', inject(function($controller) {
                 <section>
                     <h2>Good resources</h2>
                     <ul>
-                        <li><a href="http://www.yearofmoo.com/2012/08/use-angularjs-to-power-your-web-application.html">yearofmoo.com</a></li>
                         <li><a href="http://angularjs.org/">angularjs.org</a></li>
-                        <li><a href="http://blog.angularjs.org/">blog.angularjs.org</a></li>
-                        <li><a href="http://www.youtube.com/user/johnlindquist">John Lindquist @ youtube.com</a></li>
-                        <li><a href="http://docs.angularjs.org/cookbook/">AngularJS cookbook examples</a></li>
-                        <li><a href="https://github.com/angular/angular-seed">angular-seed</a></li>
-                        <li><a href="https://github.com/CaryLandholt/AngularFun">Angular Fun + CoffeeScript + RequireJs</a></li>
-                        <li><a href="http://angular-ui.github.com/">Angular-UI</a></li>
-                        <li><a href="http://groups.google.com/group/angular ">Google groups - AngularJS</a></li>
+						<li><a href="http://groups.google.com/group/angular ">Google groups - AngularJS</a></li>
+						<li><a href="http://blog.angularjs.org/">blog.angularjs.org</a></li>
+						<li><a href="http://www.yearofmoo.com/2012/08/use-angularjs-to-power-your-web-application.html">yearofmoo.com</a></li>
+						<li><a href="http://www.youtube.com/user/johnlindquist">John Lindquist @ youtube.com</a></li>
+						<li><a href="http://egghead.io/">Egghead screencast series</a></li>
+						<li><a href="https://github.com/angular/angular-seed">angular-seed</a></li>
+						<li><a href="http://docs.angularjs.org/cookbook/">AngularJS cookbook examples</a></li>
+						<li><a href="https://github.com/CaryLandholt/AngularFun">Angular Fun + CoffeeScript + RequireJs</a></li>
+						<li><a href="http://angular-ui.github.com/">Angular-UI</a></li>
                         <li><a href="http://deansofer.com/posts/view/14/AngularJs-Tips-and-Tricks-UPDATED">AngularJS tips and tricks</a></li>
                         <li><a href="http://stackoverflow.com/questions/tagged/angularjs">StackOverflow (1165 Q&A)</a></li>
                     </ul>
