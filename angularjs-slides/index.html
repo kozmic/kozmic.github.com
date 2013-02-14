@@ -92,6 +92,43 @@
                 </section>
 
                 <section>
+                    <h2>My claims about AngularJS</h2>
+                    <ul>
+                        <li>
+                            Less code because of binding and dependency injection
+                        </li>
+                        <li>
+                            Easy to test
+                        </li>
+                        <li>
+                            Loose coupling
+                        </li>
+                        <li>
+                            Never repeat yourself (service -> inject)
+                        </li>
+                        <li>
+                            Components are easy to reuse between projects
+                        </li>
+                        <li>
+                            Don't use angularjs to display thousands of read-only objects pulled from backend each second
+                        </li>
+                    </ul>
+                    <br /><br /><br />
+                    <h4>Challenge these claims through out the presentation ;)</h4>
+
+                    <aside class="notes">
+                        <ul>
+                            <li>
+                                Less code, less bugs
+                            </li>
+                            <li>
+                                Dependency injection makes it easy to test
+                            </li>
+                        </ul>
+                    </aside>
+                </section>
+
+                <section>
                     <h2>AngularJS objects</h2>
 
                     <p>All attributes and objects starting with $ are built into AngularJS.</p>
@@ -430,7 +467,7 @@ var RealLifeApp = angular.module('RealLifeApp', [
 // Common routes used by multiple apps
 angular.module('routes.common', function($routeProvider) {});
 
-// App1 specific routes which loads common
+// App1 specific routes which "includes" common routes
 app1.module('routes.app1', function($routeProvider, 'routes.common') {});
 
 var app1 = angular.module('myApp1', ['routes.app1']);
@@ -523,7 +560,7 @@ myApp.directive('directiveName', function() {
                     </ul>
 					<br /><br /><br />
 					<h4>
-						Only place DOM-manipulation is allowed!
+						The only place DOM-manipulation is allowed!
 					</h4>
 
                     <aside class="notes"></aside>
