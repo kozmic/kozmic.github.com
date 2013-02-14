@@ -104,17 +104,14 @@
                             Loose coupling
                         </li>
                         <li>
-                            Never repeat yourself (service -> inject)
+                            Don't repeat yourself (service -> inject)
                         </li>
                         <li>
                             Components are easy to reuse between projects
                         </li>
-                        <li>
-                            Don't use angularjs to display thousands of read-only objects pulled from backend each second
-                        </li>
                     </ul>
                     <br /><br /><br />
-                    <h4>Challenge these claims through out the presentation ;)</h4>
+                    <h4>Challenge these claims throughout the presentation ;)</h4>
 
                     <aside class="notes">
                         <ul>
@@ -147,7 +144,7 @@
                         </tr>
                         <tr>
                             <td><strong>Controller:</strong></td>
-                            <td>Sets model on $scope and watches for changes, in addition to exposing helper methods for view</td>
+                            <td>Sets model on <code>$scope</code> and watches for changes, in addition to exposing helper methods for view</td>
                         </tr>
                     </table>
                     
@@ -179,7 +176,7 @@
 
                     <ul>
                         <li>
-                            Usually populates $scope through services or factories
+                            Usually populates <code>$scope</code> through services or factories
                         </li>
                         <li>
                             Contains helper functions for view
@@ -807,6 +804,24 @@ describe('PhoneCat controllers', function() {
                             angular.mock.debug
                         </li>
                     </ul>
+
+                    <aside class="notes"></aside>
+                </section>
+
+                <section>
+                    <h2>Downsides</h2>
+
+                    <ul->
+                        <li>
+                            Don't use AngularJS to display thousands of read-only objects pulled from backend each second
+                        </li>
+                        <li>
+                            Simple projects, AngularJS shines in big projects
+                        </li>
+                        <li>
+                            AngularJS adds some complexity, as Spring does in the Java world
+                        </li>
+                    </ul->
 
                     <aside class="notes"></aside>
                 </section>
